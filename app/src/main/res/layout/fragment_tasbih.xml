@@ -27,6 +27,9 @@
             android:layout_height="70dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="18dp"
             android:contentDescription="Reset Hitungan Sekarang"
             android:src="@drawable/ic_baseline_refresh_24px" />
 
@@ -36,6 +39,9 @@
             android:layout_height="70dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="18dp"
             android:contentDescription="Tambah ke Total"
             android:src="@drawable/ic_baseline_add_24" />
     </LinearLayout>
