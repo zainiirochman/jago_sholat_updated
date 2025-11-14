@@ -5,27 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat; // <-- IMPORT BARU
+
 public class AlarmReceiver extends BroadcastReceiver {
 
-    public static final String EXTRA_TITLE = "EXTRA_TITLE";
-    public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
+    public static final String EXTRA_PRAYER_NAME = "EXTRA_PRAYER_NAME";
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String title = intent.getStringExtra(EXTRA_TITLE);
-        String message = intent.getStringExtra(EXTRA_MESSAGE);
+        String prayerName = intent.getStringExtra(EXTRA_PRAYER_NAME);
+        if (prayerName == null) prayerName = "Sholat";
 
-        if (title == null) {
-            title = "Waktu Sholat";
-        }
+        Log.d("AlarmReceiver", "Alarm Diterima: " + prayerName + ". Memulai Service...");
 
-        Log.d("AlarmReceiver", "Alarm Diterima: " + title);
+        Intent serviceIntent = new Intent(context, AdhanPlaybackService.class);
+        serviceIntent.putExtra(EXTRA_PRAYER_NAME, prayerName);
 
-        NotificationHelper notificationHelper = new NotificationHelper(context);
-        notificationHelper.createNotificationChannel();
-        notificationHelper.showNotification(title, message);
-
+        ContextCompat.startForegroundService(context, serviceIntent);
 
         AlarmScheduler.scheduleNextDayAlarms(context);
     }
