@@ -2,41 +2,25 @@ package id.duglegir.jagosholat.util;
 
 import android.os.CountDownTimer;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 import id.duglegir.jagosholat.R;
-
-
 
 public class JadwalHelper {
 
     private FunctionHelper functionHelper = new FunctionHelper();
     private WaktuShalatHelper prayers = new WaktuShalatHelper();
-    private Date now = new Date();
     private Calendar cal = Calendar.getInstance();
-
-
     private int jmlWaktuShubuh, jmlWaktuTerbit, jmlWaktuDzuhur,
             jmlWaktuAshar, jmlWaktuMaghrib, jmlWaktuIsya, jmlBeMidnight, jmlAftMidnight;
     private int realTime;
-
-
-
     private final int JAM_KE_DETIK = 3600;
     private final int MENIT_KE_DETIK = 60;
     private final String BUKAN_WAKTU_SHOLAT = "Belum Masuk Waktu Sholat";
     private static final String FORMAT_COUNTDOWN = "%02d : %02d : %02d";
-
-
-    private double latitude = -6.1744;
-    private double longitude = 106.8294;
     private double timezone = (Calendar.getInstance().getTimeZone().getOffset(Calendar.getInstance().getTimeInMillis())) / (1000 * 60 * 60);
-
-
     private String arrayTemp[] = {"Shalat Shubuh", "Shalat Dzuhur", "Shalat Ashar","Shalat Maghrib", "Shalat Isya", BUKAN_WAKTU_SHOLAT};
     private int offsets [] = { 0, 0, 0, 0, 0, 0, 0 };
     private ArrayList prayerTimes, prayerNames;
@@ -45,9 +29,9 @@ public class JadwalHelper {
     public JadwalHelper() {
         this.jmlBeMidnight = (23 * JAM_KE_DETIK) + (59 * MENIT_KE_DETIK);
         this.jmlAftMidnight = (0 * JAM_KE_DETIK) + (0 * MENIT_KE_DETIK);
-        setJmlWaktu();
+
         functionHelper.getSystemRealTime();
-        this.realTime = functionHelper.getSumWaktuDetik();
+
     }
 
     public int getJmlWaktuShubuh() {
@@ -84,70 +68,74 @@ public class JadwalHelper {
 
 
 
-    public void setJadwalShalat(TextView txt){
+    public void setJadwalShalat(TextView txt, double latitude, double longitude){
+        setJmlWaktu(latitude, longitude);
+
+        functionHelper.getSystemRealTime();
+        this.realTime = functionHelper.getSumWaktuDetik();
+
         if ((realTime == jmlAftMidnight) || (realTime < jmlWaktuShubuh) ) {
-            txt.setText(arrayTemp[4]); // isya
+            txt.setText(arrayTemp[4]); 
         } else if ((realTime == jmlWaktuShubuh) || (realTime < jmlWaktuTerbit)) {
-            txt.setText(arrayTemp[0]); // shubuh
+            txt.setText(arrayTemp[0]); 
         } else if (realTime == jmlWaktuTerbit || realTime < jmlWaktuDzuhur) {
-            txt.setText(arrayTemp[5]); // bukan waktu shalat
+            txt.setText(arrayTemp[5]); 
             txt.setTextSize(20);
         } else if ((realTime == jmlWaktuDzuhur) || (realTime < jmlWaktuAshar)) {
-            txt.setText(arrayTemp[1]); // dzuhur
+            txt.setText(arrayTemp[1]); 
         } else if ((realTime == jmlWaktuAshar) || (realTime < jmlWaktuMaghrib)) {
-            txt.setText(arrayTemp[2]); // ashar
+            txt.setText(arrayTemp[2]); 
         } else if ((realTime == jmlWaktuMaghrib) || (realTime < jmlWaktuIsya)) {
-            txt.setText(arrayTemp[3]); // maghrib
+            txt.setText(arrayTemp[3]); 
         } else if ((realTime == jmlWaktuIsya) || (realTime <= jmlBeMidnight)) {
-            txt.setText(arrayTemp[4]); // isya
+            txt.setText(arrayTemp[4]); 
         }  else {
             txt.setText(arrayTemp[5]);
             txt.setTextSize(20);
         }
     }
 
-    public String getMJadwalShalat() {
+    public String getMJadwalShalat(double latitude, double longitude) {
+        setJmlWaktu(latitude, longitude);
+
+        functionHelper.getSystemRealTime();
+        this.realTime = functionHelper.getSumWaktuDetik();
+
         if ((realTime == jmlAftMidnight) || (realTime < jmlWaktuShubuh)){
-            return arrayTemp[4]; // isya
+            return arrayTemp[4]; 
         }else if ((realTime == jmlWaktuShubuh) || (realTime < jmlWaktuTerbit)) {
-            return arrayTemp[0]; // shubuh
+            return arrayTemp[0]; 
         }else if (realTime == jmlWaktuTerbit || realTime < jmlWaktuDzuhur) {
-            return arrayTemp[5]; // bukan waktu shalat
+            return arrayTemp[5]; 
         } else if ((realTime == jmlWaktuDzuhur) || (realTime < jmlWaktuAshar)) {
-            return arrayTemp[1]; // dzuhur
+            return arrayTemp[1]; 
         } else if ((realTime == jmlWaktuAshar) || (realTime < jmlWaktuMaghrib)) {
-            return arrayTemp[2]; // ashar
+            return arrayTemp[2]; 
         } else if ((realTime == jmlWaktuMaghrib) || (realTime < jmlWaktuIsya)) {
-            return arrayTemp[3]; // maghrib
+            return arrayTemp[3]; 
         } else if ((realTime == jmlWaktuIsya) || (realTime <= jmlBeMidnight)) {
-            return arrayTemp[4]; // isya
+            return arrayTemp[4]; 
         }  else {
-            return arrayTemp[5]; // bukan waktu shalat
+            return arrayTemp[5]; 
         }
     }
 
     public void CoundownTime(int waktu, final TextView mTextView){
-        new CountDownTimer(waktu, 1000) { // adjust the milli seconds here
-
+        new CountDownTimer(waktu, 1000) { 
             public void onTick(long millisUntilFinished) {
-
                 mTextView.setText("- "+ String.format(FORMAT_COUNTDOWN,
                     TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                     TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                     TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
 
             }
-
             public void onFinish() {
                 mTextView.setText(R.string.jadwal_helper_saatnya_shalat);
             }
-
         }.start();
     }
 
-
-
-    public void MethodWaktuShalatHelper(){
+    public void MethodWaktuShalatHelper(double latitude, double longitude){
 
         prayers.setTimeFormat(prayers.Time24);
         prayers.setCalcMethod(prayers.MWL);
@@ -155,33 +143,22 @@ public class JadwalHelper {
         prayers.setAdjustHighLats(prayers.MidNight);
         prayers.tune(offsets);
 
-        cal.setTime(now);
+        cal.setTime(new Date());
         prayerTimes = prayers.getPrayerTimes(cal, latitude, longitude, timezone);
         prayerNames = prayers.getTimeNames();
-
-
     }
 
-
-
-    public void setJmlWaktu(){
-
-        MethodWaktuShalatHelper();
-
-
+    public void setJmlWaktu(double latitude, double longitude){
+        MethodWaktuShalatHelper(latitude, longitude);
         for (int i = 0; i < prayerTimes.size(); i++) {
-
             String tempWaktu = prayerTimes.get(i).toString();
             String hours = tempWaktu.substring(0, 2);
             String minutes = tempWaktu.substring(5, tempWaktu.length());
 
-
             int jam = Integer.parseInt(hours);
             int menit = Integer.parseInt(minutes);
 
-
             int total = (jam * JAM_KE_DETIK) + (menit * MENIT_KE_DETIK);
-
 
             if (prayerNames.get(i).equals("Shubuh")) {
                 this.jmlWaktuShubuh = total;
@@ -196,18 +173,11 @@ public class JadwalHelper {
             }  else if (prayerNames.get(i).equals("Matahari Terbit")){
                 this.jmlWaktuTerbit = total;
             }
-
-
         }
-
     }
 
-
-    public void setTimeOnline(TextView txt_shubuh, TextView txt_dzuhur , TextView txt_ashar, TextView txt_maghrib, TextView txt_isya) {
-
-        MethodWaktuShalatHelper();
-
-
+    public void setTimeOnline(TextView txt_shubuh, TextView txt_dzuhur , TextView txt_ashar, TextView txt_maghrib, TextView txt_isya, double latitude, double longitude) {
+        MethodWaktuShalatHelper(latitude, longitude);
 
         for (int i = 0; i < prayerTimes.size(); i++) {
             if (prayerNames.get(i).equals("Shubuh")) {
@@ -222,9 +192,5 @@ public class JadwalHelper {
                 txt_isya.setText(prayerTimes.get(i).toString());
             }
         }
-
-
     }
-
-
 }
